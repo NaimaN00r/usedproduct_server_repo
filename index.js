@@ -153,6 +153,30 @@ async function run(){
             const result = await usersCollection.updateOne(filter, updatedDoc, options);
             res.send(result1);
         })
+        app.put('/products/:id',verifyJWT,  async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id:ObjectId(id)}
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    isAdvertise: 'Advertised'
+                }
+            }
+            const result = await productsCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        })
+        // app.put('/products3/:id',  async (req, res) => {
+        //     const id = req.params.id;
+        //     const filter = { _id:ObjectId(id)}
+        //     const options = { upsert: true };
+        //     const updatedDoc = {
+        //         $set: {
+        //             isWishList: 'Wishedlist'
+        //         }
+        //     }
+        //     const result = await productsCollection.updateOne(filter, updatedDoc, options);
+        //     res.send(result);
+        // })
         
 
     }
