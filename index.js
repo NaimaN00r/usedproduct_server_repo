@@ -44,17 +44,7 @@ async function run(){
         const productsCollection = client.db('Mobiles').collection('products');
         const paymentsCollection = client.db('Mobiles').collection('payments');
 
-        // NOTE: make sure you use verifyAdmin after verifyJWT
-        // const verifyAdmin = async (req, res, next) =>{
-        //     const decodedEmail = req.decoded.email;
-        //     const query = { email: decodedEmail };
-        //     const user = await usersCollection.findOne(query);
-
-        //     if (user?.role !== 'admin') {
-        //         return res.status(403).send({ message: 'forbidden access' })
-        //     }
-        //     next();
-        // }
+       
 
         app.get('/Category', async(req, res) => {
             const query = {}
@@ -62,20 +52,7 @@ async function run(){
             const services = await cursor.toArray();
             res.send(services);
         });    
-        // app.get('/products', async(req, res) => {
-        //     const query = {}
-        //     const cursor = productsCollection.find(query);
-        //     const services = await cursor.toArray();
-        //     res.send(services);
-        // });    
-        // app.post('/Category/:title', async (req, res) => {
-        //     const doctor = req.body;
-        //     const title=req.params.title;
-        //     const query = { title:title};
-        //     const result = await productCollection.find(query);
-        //     const trial = await result.insertOne(doctor);
-        //     res.send(trial);
-        // });
+       
         app.get('/products/:title', async (req, res) => {
             const name = req.params.title;
             const query = { category: name };
@@ -85,18 +62,7 @@ async function run(){
         app.post('/bookings', async (req, res) => {
             const booking = req.body;
             console.log(booking);
-            // const query = {
-            //     appointmentDate: booking.appointmentDate,
-            //     email: booking.email,
-            //     treatment: booking.treatment 
-            // }
-
-            // const alreadyBooked = await bookingsCollection.find(query).toArray();
-
-            // if (alreadyBooked.length){
-            //     const message = `You already have a booking on ${booking.appointmentDate}`
-            //     return res.send({acknowledged: false, message})
-            // }
+            
 
             const result = await bookingsCollection.insertOne(booking);
             res.send(result);
@@ -165,18 +131,7 @@ async function run(){
             const result = await productsCollection.updateOne(filter, updatedDoc, options);
             res.send(result);
         })
-        // app.put('/products3/:id',  async (req, res) => {
-        //     const id = req.params.id;
-        //     const filter = { _id:ObjectId(id)}
-        //     const options = { upsert: true };
-        //     const updatedDoc = {
-        //         $set: {
-        //             isWishList: 'Wishedlist'
-        //         }
-        //     }
-        //     const result = await productsCollection.updateOne(filter, updatedDoc, options);
-        //     res.send(result);
-        // })
+       
         app.get('/users/:role', async (req, res) => {
             const role = req.params.role;
             const query = { role: role};
@@ -197,12 +152,7 @@ async function run(){
         })
         app.get('/products',verifyJWT, async (req, res) => {
             const email = req.query.email;
-            // const decodedEmail = req.decoded.email;
-
-            // if (email !== decodedEmail) {
-            //     return res.status(403).send({ message: 'forbidden access' });
-            // }
-
+           
             const query = { email: email };
             const product = await productsCollection.find(query).toArray();
             res.send(product);
@@ -281,12 +231,7 @@ async function run(){
 
             res.send(result);
         })
-        // app.get('/products/:email', async (req, res) => {
-        //     const email = req.params.email;
-        //     const query = {email};
-        //     const user = await productsCollection.find(query).toArray();
-        //     res.send(user);
-        // })
+       
 
     }
     finally{
@@ -305,10 +250,5 @@ app.get('/',async(req,res)=>{
 app.listen(port,()=>console.log(`Alexa is running on ${port}`))
 
 
-        //  * API Naming Convention 
-        //  * app.get('/bookings')
-        //  * app.get('/bookings/:id')
-        //  * app.post('/bookings')
-        //  * app.patch('/bookings/:id')
-        //  * app.delete('/bookings/:id')
+        
         
