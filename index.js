@@ -177,7 +177,116 @@ async function run(){
         //     const result = await productsCollection.updateOne(filter, updatedDoc, options);
         //     res.send(result);
         // })
-        
+        app.get('/users/:role', async (req, res) => {
+            const role = req.params.role;
+            const query = { role: role};
+            const user = await usersCollection.find(query).toArray();
+            res.send(user);
+        })
+        app.get('/products1/:isAdvertise',verifyJWT, async (req, res) => {
+            const isAdvertise = req.params.isAdvertise;
+            console.log(isAdvertise);
+            const query = { isAdvertise: isAdvertise};
+            const result = await productsCollection.find(query).toArray();
+            res.send(result);
+        })
+        app.post('/products',verifyJWT, async (req, res) => {
+            const product = req.body;
+            const result = await productsCollection.insertOne(product);
+            res.send(result);
+        })
+        app.get('/products',verifyJWT, async (req, res) => {
+            const email = req.query.email;
+            // const decodedEmail = req.decoded.email;
+
+            // if (email !== decodedEmail) {
+            //     return res.status(403).send({ message: 'forbidden access' });
+            // }
+
+            const query = { email: email };
+            const product = await productsCollection.find(query).toArray();
+            res.send(product);
+        })
+        app.delete('/products/:id',verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await productsCollection.deleteOne(filter);
+            res.send(result);
+        })
+        app.delete('/users/:id',verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await usersCollection.deleteOne(filter);
+            res.send(result);
+        })
+        app.get('/bookings',verifyJWT, async (req, res) => {
+            const email = req.query.email;
+            const decodedEmail = req.decoded.email;
+
+            if (email !== decodedEmail) {
+                return res.status(403).send({ message: 'forbidden access' });
+            }
+
+            const query = { email: email };
+            const product = await bookingsCollection.find(query).toArray();
+            res.send(product);
+        })
+        app.get('/bookings/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const booking = await bookingsCollection.findOne(query);
+            res.send(booking);
+        })
+        app.post('/create-payment-intent',verifyJWT, async (req, res) => {
+            const booking = req.body;
+            const price = booking.price;
+            const amount = price * 100;
+
+            const paymentIntent = await stripe.paymentIntents.create({
+                currency: 'usd',
+                amount: amount,
+                "payment_method_types": [
+                    "card"
+                ]
+            });
+            res.send({
+                clientSecret: paymentIntent.client_secret,
+            });
+        });
+        app.get('/bookings1/:email/:isWishList',verifyJWT, async (req, res) => {
+            const email = req.params.email;
+            const isWishList = req.params.isWishList;
+            const query = { 
+                email:email,
+                isWishList:isWishList
+             };
+            const booking = await bookingsCollection.find(query).toArray();
+            res.send(booking);
+        })
+        app.post('/payments',verifyJWT, async (req, res) =>{
+            const payment = req.body;
+            const result = await paymentsCollection.insertOne(payment);
+            const id = payment.bookingId
+            const filter = {_id: ObjectId(id)}
+            const filter1 = {id: id}
+
+            const updatedDoc = {
+                $set: {
+                    paid: true,
+                    transactionId: payment.transactionId
+                }
+            }
+            const updatedResult = await bookingsCollection.updateOne(filter1, updatedDoc)
+            const updatedResult1 = await productsCollection.updateOne(filter, updatedDoc)
+
+            res.send(result);
+        })
+        // app.get('/products/:email', async (req, res) => {
+        //     const email = req.params.email;
+        //     const query = {email};
+        //     const user = await productsCollection.find(query).toArray();
+        //     res.send(user);
+        // })
 
     }
     finally{
