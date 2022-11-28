@@ -82,6 +82,25 @@ async function run(){
             const service = await productsCollection.find(query).toArray();
             res.send(service);
         });
+        app.post('/bookings', async (req, res) => {
+            const booking = req.body;
+            console.log(booking);
+            // const query = {
+            //     appointmentDate: booking.appointmentDate,
+            //     email: booking.email,
+            //     treatment: booking.treatment 
+            // }
+
+            // const alreadyBooked = await bookingsCollection.find(query).toArray();
+
+            // if (alreadyBooked.length){
+            //     const message = `You already have a booking on ${booking.appointmentDate}`
+            //     return res.send({acknowledged: false, message})
+            // }
+
+            const result = await bookingsCollection.insertOne(booking);
+            res.send(result);
+        })
         
     }
     finally{
