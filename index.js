@@ -140,6 +140,19 @@ async function run(){
             const user = await usersCollection.findOne(query);
             res.send({ isSeller: user?.role === 'seller' });
         })
+        app.put('/products2/:email',verifyJWT,  async (req, res) => {
+            const email = req.params.email;
+            const filter = {email:email}
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    isVerified: 'verified'
+                }
+            }
+            const result1 = await productsCollection.updateOne(filter, updatedDoc, options);
+            const result = await usersCollection.updateOne(filter, updatedDoc, options);
+            res.send(result1);
+        })
         
 
     }
