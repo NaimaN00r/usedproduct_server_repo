@@ -111,7 +111,15 @@ async function run(){
             }
             res.status(403).send({ accessToken: '' })
         });
-            }
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            console.log(user);
+            const result = await usersCollection.insertOne(user);
+            res.send(result);
+        });
+        
+
+    }
     finally{
 
     }
