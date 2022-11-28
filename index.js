@@ -62,8 +62,27 @@ async function run(){
             const services = await cursor.toArray();
             res.send(services);
         });    
+        // app.get('/products', async(req, res) => {
+        //     const query = {}
+        //     const cursor = productsCollection.find(query);
+        //     const services = await cursor.toArray();
+        //     res.send(services);
+        // });    
+        // app.post('/Category/:title', async (req, res) => {
+        //     const doctor = req.body;
+        //     const title=req.params.title;
+        //     const query = { title:title};
+        //     const result = await productCollection.find(query);
+        //     const trial = await result.insertOne(doctor);
+        //     res.send(trial);
+        // });
+        app.get('/products/:title', async (req, res) => {
+            const name = req.params.title;
+            const query = { category: name };
+            const service = await productsCollection.find(query).toArray();
+            res.send(service);
+        });
         
-
     }
     finally{
 
